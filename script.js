@@ -262,11 +262,13 @@ function updateWrongLetters() {
 }
 
 function updateLives() {
-    const livesLeft = gameState.maxWrong - gameState.wrongGuesses + 1;
+    const livesLeft = gameState.maxWrong - gameState.wrongGuesses;
     document.getElementById('livesLeft').textContent = livesLeft;
 }
 
 function updateHangman() {
+    // Correct required order:
+    // head -> body -> left arm -> right arm -> left leg -> right leg
     const parts = ['head', 'body', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
 
     const wrongOrder = ['head', 'leftArm', 'rightArm', 'body', 'leftLeg', 'rightLeg'];
@@ -277,6 +279,7 @@ function updateHangman() {
         document.getElementById(partToShow).style.display = 'block';
     }
 }
+
 
 function resetHangman() {
     const parts = ['head', 'body', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
