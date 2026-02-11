@@ -1,5 +1,5 @@
 const defaultWords = [
-    'DEVOPS', 'AGILE', 'VERSION', 'BRANCH', 'GITHUB', 
+    'DEVOPS', 'AGILE', 'VERSION', 'BRANCH', 'GITHUB',
     'CHANGES', 'FEATURES', 'HOTFIX', 'CONTINUOUS', 'INTEGRATION',
     'DEPLOYMENT', 'TESTING', 'COMMIT', 'SNAPSHOT', 'CULTURE',
     'PIPELINE', 'DOCKER', 'SCRUM', 'KANBAN', 'MERGE'
@@ -19,7 +19,7 @@ let gameState = {
 
 let wordBank = [];
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     loadThemePreference();
     loadWordBank();
     generateKeyboard();
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function toggleTheme() {
     const themeIcon = document.querySelector('.theme-icon');
-    
+
     if (themeIcon.textContent === '🌙') {
         document.body.classList.add('dark-mode')
         themeIcon.textContent = '☀️';
@@ -42,7 +42,7 @@ function toggleTheme() {
 function loadThemePreference() {
     const themeIcon = document.querySelector('.theme-icon');
     const darkTheme = localStorage.getItem('isDark');
-    if(darkTheme == 'true') {
+    if (darkTheme == 'true') {
         document.body.classList.add('dark-mode');
         themeIcon.textContent = '☀️';
     } else {
@@ -54,10 +54,10 @@ function loadThemePreference() {
 function switchTab(tabName) {
     const tabs = document.querySelectorAll('.tab-content');
     tabs.forEach(tab => tab.classList.remove('active'));
-    
+
     const tabButtons = document.querySelectorAll('.tab');
     tabButtons.forEach(btn => btn.classList.remove('active'));
-    
+
     document.getElementById(tabName).classList.add('active');
     event.target.classList.add('active');
 }
@@ -82,9 +82,9 @@ function saveWordBank() {
 function displayWordBank() {
     const wordList = document.getElementById('wordList');
     const wordCount = document.getElementById('wordCount');
-    
+
     wordCount.textContent = wordBank.length;
-    
+
     if (wordBank.length === 0) {
         wordList.innerHTML = `
             <div class="empty-state">
@@ -94,7 +94,7 @@ function displayWordBank() {
         `;
         return;
     }
-    
+
     wordList.innerHTML = '';
     wordBank.forEach((word, index) => {
         const wordItem = document.createElement('div');
@@ -158,7 +158,7 @@ function deleteWord(index) {
 function generateKeyboard() {
     const keyboard = document.getElementById('keyboard');
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    
+
     keyboard.innerHTML = '';
     for (let letter of letters) {
         const button = document.createElement('button');
@@ -173,16 +173,21 @@ function generateKeyboard() {
 function startGame() {
     const p1Name = document.getElementById('player1Name').value.trim();
     const p2Name = document.getElementById('player2Name').value.trim();
-    
-    gameState.player1.name = p1Name || 'Player 1';
-    gameState.player2.name = p2Name || 'Player 2';
-    
-    document.getElementById('player1Display').textContent = gameState.player1.name;
-    document.getElementById('player2Display').textContent = gameState.player2.name;
-    
-    document.getElementById('gameArea').style.display = 'block';
-    
-    nextRound();
+
+    if (p1Name.toLowerCase() != p2Name.toLowerCase() || (p1Name == "" && p2Name == "")) {
+        gameState.player1.name = p1Name || 'Player 1';
+        gameState.player2.name = p2Name || 'Player 2';
+        document.getElementById('player1Display').textContent = gameState.player1.name;
+        document.getElementById('player1Name').value = gameState.player1.name;
+        document.getElementById('player2Display').textContent = gameState.player2.name;
+        document.getElementById('player2Name').value = gameState.player2.name;
+        document.getElementById('gameArea').style.display = 'block';
+        nextRound();
+    } else {
+        alert("The player names must be unique. Please try again")
+    }
+
+
 }
 
 function nextRound() {
@@ -190,14 +195,14 @@ function nextRound() {
         alert('No words in the word bank! Add some words first.');
         return;
     }
-    
+
     gameState.guessedLetters = [];
     gameState.wrongGuesses = 0;
     gameState.gameActive = true;
-    
+
     const randomIndex = Math.floor(Math.random() * wordBank.length);
     gameState.currentWord = wordBank[randomIndex];
-    
+
     document.getElementById('gameStatus').classList.remove('show');
     document.getElementById('gameStatus').className = 'game-status';
     resetHangman();
@@ -210,18 +215,18 @@ function nextRound() {
 
 function guessLetter(letter) {
     if (!gameState.gameActive) return;
-    
+
     if (gameState.guessedLetters.includes(letter)) {
         return;
     }
-    
+
     gameState.guessedLetters.push(letter);
-    
+
     if (!gameState.currentWord.includes(letter)) {
         gameState.wrongGuesses++;
         updateHangman();
     }
-    
+
     updateWordDisplay();
     updateWrongLetters();
     updateLives();
@@ -231,7 +236,7 @@ function guessLetter(letter) {
 function updateWordDisplay() {
     const display = document.getElementById('wordDisplay');
     let displayText = '';
-    
+
     for (let letter of gameState.currentWord) {
         if (gameState.guessedLetters.includes(letter)) {
             displayText += letter + ' ';
@@ -239,16 +244,16 @@ function updateWordDisplay() {
             displayText += '_ ';
         }
     }
-    
+
     display.textContent = displayText.trim();
 }
 
 function updateWrongLetters() {
     const wrongLettersDiv = document.getElementById('wrongLetters');
-    const wrong = gameState.guessedLetters.filter(letter => 
+    const wrong = gameState.guessedLetters.filter(letter =>
         !gameState.currentWord.includes(letter)
     );
-    
+
     if (wrong.length === 0) {
         wrongLettersDiv.textContent = 'None yet';
     } else {
@@ -263,10 +268,10 @@ function updateLives() {
 
 function updateHangman() {
     const parts = ['head', 'body', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
-    
+
     const wrongOrder = ['head', 'leftArm', 'rightArm', 'body', 'leftLeg', 'rightLeg'];
     const partIndex = gameState.wrongGuesses - 1;
-    
+
     if (partIndex >= 0 && partIndex < wrongOrder.length) {
         const partToShow = wrongOrder[partIndex];
         document.getElementById(partToShow).style.display = 'block';
@@ -293,7 +298,7 @@ function resetKeyboard() {
 function updateCurrentPlayer() {
     const player1Div = document.getElementById('player1Score');
     const player2Div = document.getElementById('player2Score');
-    
+
     if (gameState.currentPlayer === 1) {
         player1Div.classList.add('active');
         player2Div.classList.remove('active');
@@ -307,12 +312,12 @@ function checkGameStatus() {
     const allLettersGuessed = [...gameState.currentWord].every(letter =>
         gameState.guessedLetters.includes(letter)
     );
-    
+
     if (allLettersGuessed) {
         gameWon();
         return;
     }
-    
+
     if (gameState.wrongGuesses >= gameState.maxWrong) {
         gameLost();
         return;
@@ -321,7 +326,7 @@ function checkGameStatus() {
 
 function gameWon() {
     gameState.gameActive = false;
-    
+
     if (gameState.currentPlayer === 1) {
         gameState.player2.score += 10;
         document.getElementById('score2').textContent = gameState.player2.score;
@@ -329,28 +334,28 @@ function gameWon() {
         gameState.player1.score += 10;
         document.getElementById('score1').textContent = gameState.player1.score;
     }
-    
+
     const statusDiv = document.getElementById('gameStatus');
     const statusMsg = document.getElementById('statusMessage');
-    
-    const winnerName = gameState.currentPlayer === 1 ? 
+
+    const winnerName = gameState.currentPlayer === 1 ?
         gameState.player2.name : gameState.player1.name;
-    
+
     statusMsg.textContent = `🎉 ${winnerName} won! The word was: ${gameState.currentWord}`;
     statusDiv.classList.add('show', 'winner');
 }
 
 function gameLost() {
     gameState.gameActive = false;
-    
+
     const statusDiv = document.getElementById('gameStatus');
     const statusMsg = document.getElementById('statusMessage');
-    
-    const currentPlayerName = gameState.currentPlayer === 1 ? 
+
+    const currentPlayerName = gameState.currentPlayer === 1 ?
         gameState.player1.name : gameState.player2.name;
-    
+
     statusMsg.textContent = `😢 ${currentPlayerName} lost! The word was: ${gameState.currentWord}`;
     statusDiv.classList.add('show', 'loser');
-    
+
     gameState.currentPlayer = gameState.currentPlayer === 1 ? 2 : 1;
 }
