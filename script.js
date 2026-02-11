@@ -249,12 +249,16 @@ function updateWordDisplay() {
 }
 
 function updateWrongLetters() {
-    const wrongLetters = gameState.guessedLetters.filter(letter => 
-        !gameState.selectedWord.includes(letter)
+    const wrongLettersDiv = document.getElementById('wrongLetters');
+    const wrongLetters = gameState.guessedLetters.filter(letter =>
+        !gameState.currentWord.includes(letter)
     );
 
-    wrongLettersDiv.textContent = wrongLetters.join(', ');
+    wrongLettersDiv.textContent = wrongLetters.length > 0
+        ? wrongLetters.join(', ')
+        : 'None yet';
 }
+
 
 function updateLives() {
     const livesLeft = gameState.maxWrong - gameState.wrongGuesses;
@@ -265,10 +269,12 @@ function updateHangman() {
     // Correct required order:
     // head -> body -> left arm -> right arm -> left leg -> right leg
     const parts = ['head', 'body', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
+
+    const wrongOrder = ['head', 'leftArm', 'rightArm', 'body', 'leftLeg', 'rightLeg'];
     const partIndex = gameState.wrongGuesses - 1;
 
-    if (partIndex >= 0 && partIndex < parts.length) {
-        const partToShow = parts[partIndex];
+    if (partIndex >= 0 && partIndex < wrongOrder.length) {
+        const partToShow = wrongOrder[partIndex];
         document.getElementById(partToShow).style.display = 'block';
     }
 }
@@ -322,21 +328,21 @@ function checkGameStatus() {
 
 function gameWon() {
     gameState.gameActive = false;
-    
+
     if (gameState.currentPlayer === 1) {
-        gameState.player1.score += 10;
-        document.getElementById('score1').textContent = gameState.player1.score;
-    } else {
         gameState.player2.score += 10;
         document.getElementById('score2').textContent = gameState.player2.score;
+    } else {
+        gameState.player1.score += 10;
+        document.getElementById('score1').textContent = gameState.player1.score;
     }
-    
+
     const statusDiv = document.getElementById('gameStatus');
     const statusMsg = document.getElementById('statusMessage');
-    
-    const winnerName = gameState.currentPlayer === 1 ? 
-        gameState.player1.name : gameState.player2.name;
-    
+
+    const winnerName = gameState.currentPlayer === 1 ?
+        gameState.player2.name : gameState.player1.name;
+
     statusMsg.textContent = `🎉 ${winnerName} won! The word was: ${gameState.currentWord}`;
     statusDiv.classList.add('show', 'winner');
 }
