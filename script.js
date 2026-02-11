@@ -115,6 +115,13 @@ function addWord() {
     const word = input.value.trim().toUpperCase();
 
     if (!word) return;
+
+    // prevent duplicates
+    if (wordBank.includes(word)) {
+        alert('That word already exists in the word bank.');
+        return;
+    }
+
     wordBank.push(word);
     input.value = '';
     saveWordBank();
@@ -128,6 +135,13 @@ function editWord(index) {
 
     const cleaned = newWord.trim().toUpperCase();
     if (!cleaned) return;
+
+    // optional: prevent duplicates
+    if (wordBank.includes(cleaned) && wordBank[index] !== cleaned) {
+        alert('That word already exists in the word bank.');
+        return;
+    }
+
     wordBank[index] = cleaned;
     saveWordBank();
     displayWordBank();
