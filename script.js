@@ -45,8 +45,10 @@ function switchTab(tabName) {
     event.target.classList.add('active');
 }
 
+const WORD_BANK_KEY = 'wordBank';
+
 function loadWordBank() {
-    const stored = localStorage.getItem('wordBank');
+    const stored = localStorage.getItem(WORD_BANK_KEY);
     if (stored) {
         wordBank = JSON.parse(stored);
     } else {
@@ -57,7 +59,7 @@ function loadWordBank() {
 }
 
 function saveWordBank() {
-    localStorage.setItem('devopsWords', JSON.stringify(wordBank));
+    localStorage.setItem(WORD_BANK_KEY, JSON.stringify(wordBank));
 }
 
 function displayWordBank() {
@@ -95,23 +97,28 @@ function addWord() {
     const input = document.getElementById('newWord');
     const word = input.value.trim().toUpperCase();
 
+    if (!word) return;
     wordBank.push(word);
     input.value = '';
     saveWordBank();
     displayWordBank();
 }
 
+
 function editWord(index) {
     const newWord = prompt('Edit word:', wordBank[index]);
-    if (newWord) {
-        wordBank.splice(index, 1);
-        saveWordBank();
-        displayWordBank();
-    }
+    if (!newWord) return;
+
+    const cleaned = newWord.trim().toUpperCase();
+    if (!cleaned) return;
+    wordBank[index] = cleaned;
+    saveWordBank();
+    displayWordBank();
 }
 
+
 function deleteWord(index) {
-    if (confirm('Are you sure you want to delete this word?')) {
+    if (!confirm('Are you sure you want to delete this word?')) {
         saveWordBank();
         displayWordBank();
     }
