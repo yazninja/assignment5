@@ -20,6 +20,7 @@ let gameState = {
 let wordBank = [];
 
 document.addEventListener('DOMContentLoaded', function() {
+    loadThemePreference();
     loadWordBank();
     generateKeyboard();
 });
@@ -28,8 +29,24 @@ function toggleTheme() {
     const themeIcon = document.querySelector('.theme-icon');
     
     if (themeIcon.textContent === '🌙') {
+        document.body.classList.add('dark-mode')
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('isDark', 'true')
+    } else {
+        document.body.classList.remove('dark-mode')
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('isDark', 'false')
+    }
+}
+
+function loadThemePreference() {
+    const themeIcon = document.querySelector('.theme-icon');
+    const darkTheme = localStorage.getItem('isDark');
+    if(darkTheme == 'true') {
+        document.body.classList.add('dark-mode');
         themeIcon.textContent = '☀️';
     } else {
+        document.body.classList.remove('dark-mode');
         themeIcon.textContent = '🌙';
     }
 }
