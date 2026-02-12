@@ -219,7 +219,7 @@ function guessLetter(letter) {
     if (gameState.guessedLetters.includes(letter)) {
         return;
     }
-
+    document.getElementById('key-' + letter).setAttribute('disabled',true)
     gameState.guessedLetters.push(letter);
 
     if (!gameState.currentWord.includes(letter)) {
